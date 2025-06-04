@@ -1,6 +1,7 @@
 package limiter
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -41,10 +42,10 @@ redis.call("EXPIRE", key, ttl)
 return allowed
 `
 
-func (t *TokenBucketLimiter) Allow(req RateLimitRequest) RateLimitResponse {
+func (t *TokenBucketLimiter) Allow(ctx context.Context, req RateLimitRequest) RateLimitResponse {
 	now := time.Now().Unix()
 
-	result, err := t.redis.Eval(tokenBucketScript,
+	result, err := t.redis.Eval(ctx, tokenBucketScript,
 		[]string{req.Key},
 		req.Rate, req.Interval, now,
 	)

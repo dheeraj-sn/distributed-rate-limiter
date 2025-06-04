@@ -1,5 +1,7 @@
 package limiter
 
+import "context"
+
 type RateLimitRequest struct {
 	Key      string
 	Rate     int // tokens per interval
@@ -12,5 +14,5 @@ type RateLimitResponse struct {
 }
 
 type Limiter interface {
-	Allow(req RateLimitRequest) RateLimitResponse
+	Allow(ctx context.Context, req RateLimitRequest) RateLimitResponse
 }

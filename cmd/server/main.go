@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 
 	"github.com/dheeraj-sn/distributed-rate-limiter/internal/config"
@@ -12,7 +13,11 @@ import (
 func main() {
 	cfg := config.Load()
 
-	redisClient := redis.NewRedisClient(cfg.RedisURL)
+	ctx := context.Background()
+	redisClient, err := redis.NewRedisClient(ctx, cfg.RedisURL)
+	if err != nil {
+		log.Fatalf("Failed to create Redis client: %v", err)
+	}
 	rateLimiter := limiter.NewTokenBucketLimiter(redisClient)
 
 	server := http.NewServer(cfg.HTTPPort, rateLimiter)

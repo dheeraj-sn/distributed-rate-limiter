@@ -39,7 +39,7 @@ func (s *Server) checkHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := s.limiter.Allow(limiter.RateLimitRequest{
+	resp := s.limiter.Allow(r.Context(), limiter.RateLimitRequest{
 		Key:      req.Key,
 		Rate:     req.Rate,
 		Interval: req.Interval,
