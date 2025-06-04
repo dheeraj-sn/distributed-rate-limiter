@@ -12,12 +12,6 @@ build:
 run:
 	REDIS_URL=$(REDIS_URL) go run ./cmd/server
 
-docker:
-	docker build -t $(APP_NAME):latest .
-
-docker-run:
-	docker run -e REDIS_URL=$(REDIS_URL) -p $(PORT):8080 $(APP_NAME):latest
-
 test:
 	go test ./...
 
@@ -29,3 +23,21 @@ lint:
 
 clean:
 	rm -rf bin/
+
+# Start everything using Docker Compose
+up:
+	docker-compose up --build
+
+# Stop and remove containers
+down:
+	docker-compose down
+
+# Rebuild container without cache
+rebuild:
+	docker-compose build --no-cache
+
+# View logs
+logs:
+	docker-compose logs -f rlaas
+
+

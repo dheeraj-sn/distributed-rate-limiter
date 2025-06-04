@@ -1,0 +1,16 @@
+services:
+  redis:
+    image: redis:7
+    container_name: rlaas-redis
+    ports:
+      - "6379:6379"
+
+  rlaas:
+    build: .
+    container_name: rlaas-server
+    ports:
+      - "8080:8080"
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
