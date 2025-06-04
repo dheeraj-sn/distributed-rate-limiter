@@ -1,0 +1,36 @@
+{
+    "title": "RLAAS - Rate Limiting Metrics",
+    "panels": [
+      {
+        "type": "stat",
+        "title": "Allowed Requests",
+        "targets": [
+          {
+            "expr": "rlaas_requests_total{status=\"allowed\"}",
+            "interval": "",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "type": "stat",
+        "title": "Denied Requests",
+        "targets": [
+          {
+            "expr": "rlaas_requests_total{status=\"denied\"}",
+            "refId": "B"
+          }
+        ]
+      },
+      {
+        "type": "timeseries",
+        "title": "Request Volume Over Time",
+        "targets": [
+          {
+            "expr": "rate(rlaas_requests_total[1m])",
+            "refId": "C"
+          }
+        ]
+      }
+    ]
+  }

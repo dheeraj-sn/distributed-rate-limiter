@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/dheeraj-sn/distributed-rate-limiter/internal/limiter"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type Server struct {
@@ -27,8 +29,23 @@ type CheckResponse struct {
 	RetryAfterSec int  `json:"retry_after_sec"`
 }
 
+var (
+	requestsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "rlaas_requests_total",
+			Help: "Total number of rate limit check requests",
+		},
+		[]string{"status"},
+	)
+)
+
+func init() {
+	prometheus.MustRegister(requestsTotal)
+}
+
 func (s *Server) Start() error {
 	http.HandleFunc("/check", s.checkHandler)
+	http.Handle("/metrics", promhttp.Handler())
 	return http.ListenAndServe(":"+s.port, nil)
 }
 
@@ -44,6 +61,12 @@ func (s *Server) checkHandler(w http.ResponseWriter, r *http.Request) {
 		Rate:     req.Rate,
 		Interval: req.Interval,
 	})
+
+	if resp.Allowed {
+		requestsTotal.WithLabelValues("allowed").Inc()
+	} else {
+		requestsTotal.WithLabelValues("denied").Inc()
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(CheckResponse{
