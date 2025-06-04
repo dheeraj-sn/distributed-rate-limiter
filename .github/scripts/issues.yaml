@@ -1,0 +1,50 @@
+issues:
+  - title: "Implement /check HTTP handler"
+    body: "Implement the `/check` endpoint for the REST API to accept key, rate, and interval and return whether the request is allowed."
+    labels: ["enhancement", "backend"]
+    milestone: "MVP"
+
+  - title: "Implement Token Bucket limiter with Redis backend"
+    body: "Write the token bucket algorithm logic using Redis backend (with Lua script) to maintain atomicity."
+    labels: ["backend", "enhancement"]
+    milestone: "MVP"
+
+  - title: "Add fallback to in-memory limiter if Redis is unavailable"
+    body: "Gracefully degrade to in-memory rate limiting in case Redis is unreachable."
+    labels: ["enhancement", "resilience"]
+    milestone: "MVP"
+
+  - title: "Write integration test for /check endpoint"
+    body: "Add an integration test that hits `/check` with a given key and asserts expected behavior from the limiter."
+    labels: ["test", "good first issue"]
+    milestone: "MVP"
+
+  - title: "Add Dockerfile and Makefile"
+    body: "Add Dockerfile for containerization and Makefile for local development tasks."
+    labels: ["infra", "enhancement"]
+    milestone: "MVP"
+
+  - title: "Define gRPC protos for rate limiting"
+    body: "Create proto file with service and message definitions for rate check."
+    labels: ["grpc", "enhancement"]
+    milestone: "gRPC Support"
+
+  - title: "Implement gRPC server and client"
+    body: "Add gRPC server in Go and optionally a CLI or client stub to test it."
+    labels: ["grpc", "backend"]
+    milestone: "gRPC Support"
+
+  - title: "Expose Prometheus metrics for requests and limits"
+    body: "Integrate Prometheus client and expose metrics like total requests, allowed/denied counts, and Redis latency."
+    labels: ["observability", "enhancement"]
+    milestone: "Observability"
+
+  - title: "Build a CLI for testing rate limits"
+    body: "Write a Go CLI that can issue rate limit check requests from the terminal."
+    labels: ["cli", "good first issue"]
+    milestone: "CLI Tool"
+
+  - title: "Write Helm chart for Kubernetes deployment"
+    body: "Helm chart to deploy RLAAS with environment variables and Redis connection configured."
+    labels: ["infra", "k8s"]
+    milestone: "Kubernetes & Helm"
