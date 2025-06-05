@@ -1,0 +1,29 @@
+groups:
+  - name: RLAAS Alerts
+    rules:
+      - alert: HighDeniedRequests
+        expr: rate(rlaas_requests_total{status="denied"}[1m]) > 0
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Too many denied requests"
+          description: "More than 5 denied requests/sec in the past minute."
+
+      - alert: ServiceDown
+        expr: up{job="rlaas"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "RLAAS service is down"
+          description: "The RLAAS service is not responding to Prometheus."
+
+      - alert: RedisExporterDown
+        expr: up{job="redis_exporter"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis exporter is down"
+          description: "Redis exporter is unreachable by Prometheus."

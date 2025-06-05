@@ -44,5 +44,9 @@ func (r *RedisClient) Set(ctx context.Context, key string, val string, ttlSecond
 }
 
 func (r *RedisClient) Eval(ctx context.Context, script string, keys []string, args ...interface{}) (interface{}, error) {
-	return r.client.Eval(ctx, script, keys, args...).Result()
+	result, err := r.client.Eval(ctx, script, keys, args...).Result()
+	if err == redis.Nil {
+		return nil, nil
+	}
+	return result, err
 }
