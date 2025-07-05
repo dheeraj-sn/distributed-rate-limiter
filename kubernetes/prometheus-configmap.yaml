@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: monitoring
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+    alerting:
+      alertmanagers:
+        - static_configs:
+            - targets: ['alertmanager.monitoring.svc.cluster.local:9093']
+    rule_files:
+      - "/etc/prometheus/alerts.yml"
+    scrape_configs:
+      - job_name: 'redis'
+        static_configs:
+          - targets: ['redis-exporter.monitoring.svc.cluster.local:9121']
+      - job_name: 'rlaas'
+        static_configs:
+          - targets: ['rlaas.default.svc.cluster.local:8080']
+  alerts.yml: |
+    groups:
+      - name: RLAAS Alerts
+        rules:
+          - alert: HighDeniedRequests
+            expr: rate(rlaas_requests_total{status="denied"}[1m]) > 0
+            for: 10s
+            labels:
+              severity: critical
+            annotations:
+              summary: "Too many denied requests"
+              description: "More than 5 denied requests/sec in the past minute."
+
+          - alert: ServiceDown
+            expr: up{job="rlaas"} == 0
+            for: 30s
+            labels:
+              severity: critical
+            annotations:
+              summary: "RLAAS service is down"
+              description: "The RLAAS service is not responding to Prometheus."
+
+          - alert: RedisExporterDown
+            expr: up{job="redis_exporter"} == 0
+            for: 30s
+            labels:
+              severity: critical
+            annotations:
+              summary: "Redis exporter is down"
+              description: "Redis exporter is unreachable by Prometheus."

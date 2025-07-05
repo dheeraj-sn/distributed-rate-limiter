@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rlaas
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rlaas
+  template:
+    metadata:
+      labels:
+        app: rlaas
+    spec:
+      containers:
+      - name: rlaas
+        image: dheeraj-sn/rlaas:latest
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: rlaas-config

@@ -1,0 +1,148 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards-json
+  namespace: monitoring
+data:
+  rlaas.json: |
+    {
+        "title": "RLAAS - Rate Limiting Metrics",
+        "panels": [
+          {
+            "type": "stat",
+            "title": "Allowed Requests",
+            "targets": [
+              {
+                "expr": "rlaas_requests_total{status=\"allowed\"}",
+                "interval": "",
+                "refId": "A"
+              }
+            ]
+          },
+          {
+            "type": "stat",
+            "title": "Denied Requests",
+            "targets": [
+              {
+                "expr": "rlaas_requests_total{status=\"denied\"}",
+                "refId": "B"
+              }
+            ]
+          },
+          {
+            "type": "timeseries",
+            "title": "Request Volume Over Time",
+            "targets": [
+              {
+                "expr": "rate(rlaas_requests_total[1m])",
+                "refId": "C"
+              }
+            ]
+          }
+        ]
+      }
+  redis.json: |
+    {
+        "annotations": {
+          "list": [
+            {
+              "builtIn": 1,
+              "datasource": "Prometheus",
+              "enable": true,
+              "hide": true,
+              "iconColor": "rgba(0, 211, 255, 1)",
+              "name": "Annotations & Alerts",
+              "type": "dashboard"
+            }
+          ]
+        },
+        "description": "Redis Dashboard for Prometheus Redis Exporter 1.x",
+        "editable": true,
+        "fiscalYearStartMonth": 0,
+        "gnetId": 763,
+        "graphTooltip": 1,
+        "id": 1,
+        "links": [],
+        "liveNow": false,
+        "panels": [
+          {
+            "datasource": "Prometheus",
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "fixedColor": "rgb(31, 120, 193)",
+                  "mode": "fixed"
+                },
+                "decimals": 0,
+                "mappings": [
+                  {
+                    "options": {
+                      "match": "null",
+                      "result": {
+                        "text": "N/A"
+                      }
+                    },
+                    "type": "special"
+                  }
+                ],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "s"
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 7,
+              "w": 3,
+              "x": 0,
+              "y": 0
+            },
+            "id": 9,
+            "links": [],
+            "maxDataPoints": 100,
+            "options": {
+              "colorMode": "none",
+              "graphMode": "area",
+              "justifyMode": "auto",
+              "orientation": "horizontal",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": false
+              },
+              "showPercentChange": false,
+              "textMode": "auto",
+              "wideLayout": true
+            },
+            "pluginVersion": "10.2.2",
+            "targets": [
+              {
+                "datasource": "Prometheus",
+                "expr": "max(max_over_time(redis_uptime_in_seconds{instance=~\"$instance\"}[$__interval]))",
+                "format": "time_series",
+                "interval": "",
+                "intervalFactor": 2,
+                "legendFormat": "",
+                "metric": "",
+                "refId": "A",
+                "step": 1800
+              }
+            ],
+            "title": "Max Uptime",
+            "type": "stat"
+          }
+        ]
+    }
